@@ -30,6 +30,7 @@ const statusGrid = document.getElementById("statusGrid");
 const groupGrid = document.getElementById("groupGrid");
 let displayedTotal = 0;
 let displayedAttendanceRate = 0;
+let currentAttendanceRate = 0;
 let lunchBannerVisible = false;
 
 const chartContext = document.getElementById("callsChart");
@@ -104,11 +105,9 @@ const chart = new Chart(chartContext, {
         callbacks: {
           label(context) {
             const count = context.parsed.y ?? 0;
-            const total = context.dataset.data.reduce((sum, value) => sum + Number(value || 0), 0);
-            const rate = total ? (count / total) * 100 : 0;
             return [
               `ATENDIMENTO: ${count}`,
-              `Percentual: ${rate.toLocaleString("pt-BR", {
+              `Percentual de atendimento: ${currentAttendanceRate.toLocaleString("pt-BR", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}%`,
@@ -449,10 +448,12 @@ async function loadMetrics() {
     const now = new Date();
     const label = formatTime(now);
     const total = body.data.total;
+    const nextAttendanceRate = getAttendanceRate(body.data.byStatus, total);
 
     pushPoint(label, getAttendanceCount(body.data.byStatus));
     animateTotal(total);
-    animateAttendanceRate(getAttendanceRate(body.data.byStatus, total));
+    currentAttendanceRate = nextAttendanceRate;
+    animateAttendanceRate(nextAttendanceRate);
     lastRead.textContent = formatTime(now);
     renderStatuses(body.data.byStatus);
     renderGroupCharts(body.data.byGroup, label);
