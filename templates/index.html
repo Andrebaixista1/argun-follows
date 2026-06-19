@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acompanhamento de Ligações - Vieiracred</title>
+    <link rel="icon" type="image/png" href="/logo01.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=9">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <img class="brand-logo" src="/logo01.png" alt="Vieiracred">
+          <h1>Acompanhamento de Ligações - Vieiracred</h1>
+        </div>
+        <div class="status-pill" id="statusPill">Conectando</div>
+      </header>
+
+      <section class="metrics">
+        <div>
+          <span class="label">Última leitura</span>
+          <strong id="lastRead">--:--:--</strong>
+        </div>
+        <div>
+          <span class="label">Ligações na janela</span>
+          <strong id="totalCalls">0</strong>
+        </div>
+        <div>
+          <span class="label">Atendimento</span>
+          <strong id="attendanceRate" class="rate-value neutral">0,00%</strong>
+        </div>
+        <div>
+          <span class="label">Atualização</span>
+          <strong>5s</strong>
+        </div>
+      </section>
+
+      <section class="lunch-banner" id="lunchBanner" aria-live="polite" hidden>
+        <div class="lunch-banner-icon" aria-hidden="true">
+          <span></span>
+        </div>
+        <div class="lunch-banner-copy">
+          <strong id="breakBannerTitle">Período de almoço</strong>
+          <p id="lunchBannerText"></p>
+        </div>
+      </section>
+
+      <section class="chart-wrap">
+        <div class="chart-panel">
+          <div class="chart-main">
+            <div class="chart-head">
+              <span>Atendimento recente</span>
+            </div>
+            <canvas id="callsChart"></canvas>
+          </div>
+
+          <aside class="result-legend">
+            <div class="legend-title">Resultado das Ligações</div>
+            <div class="status-grid" id="statusGrid"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="groups-wrap">
+        <div class="section-head">
+          <span>Grupos operacionais</span>
+        </div>
+        <div class="group-grid" id="groupGrid"></div>
+      </section>
+
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}?v=9"></script>
+  </body>
+</html>

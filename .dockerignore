@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+.git/
+.gitignore
+*.pyc
+alert_state.json
+*.log
