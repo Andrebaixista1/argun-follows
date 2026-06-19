@@ -1,6 +1,7 @@
 const MAX_WINDOW_MINUTES = 30;
 const MAX_WINDOW_MS = MAX_WINDOW_MINUTES * 60 * 1000;
 const POLL_MS = 5000;
+const PAGE_REFRESH_MS = 30 * 60 * 1000;
 const ATTENDANCE_COLOR = "#4ade80";
 const STATUS_COLORS = [
   "#7caf2d",
@@ -33,6 +34,7 @@ let displayedTotal = 0;
 let displayedAttendanceRate = 0;
 let currentAttendanceRate = 0;
 let lunchBannerVisible = false;
+let pageRefreshTimer = null;
 const chartPointTimes = [];
 
 const chartContext = document.getElementById("callsChart");
@@ -476,3 +478,7 @@ async function loadMetrics() {
 
 loadMetrics();
 setInterval(loadMetrics, POLL_MS);
+
+pageRefreshTimer = setTimeout(() => {
+  window.location.reload();
+}, PAGE_REFRESH_MS);

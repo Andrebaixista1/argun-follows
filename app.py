@@ -1,6 +1,7 @@
 import os
 import ssl
 import json
+import unicodedata
 from collections import Counter
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
@@ -70,6 +71,11 @@ def env_float(name, default=None):
     if value is None or value == "":
         return default
     return float(value)
+
+
+def normalize_status(value):
+    normalized = unicodedata.normalize("NFD", str(value or ""))
+    return "".join(char for char in normalized if unicodedata.category(char) != "Mn").strip().upper()
 
 
 def build_argus_payload():
@@ -404,6 +410,7 @@ def fetch_ligacoes_detalhadas():
         {"status": status, "count": count}
         for status, count in status_counter.most_common()
     ]
+    by_status.sort(key=lambda item: 0 if normalize_status(item["status"]) == "ATENDIMENTO" else 1)
     attendance_count = status_counter.get("ATENDIMENTO", 0)
     attendance_rate = (attendance_count / total * 100) if total else 0
     local_now = datetime.now(SAO_PAULO_TZ)
@@ -453,7 +460,7 @@ def fetch_ligacoes_detalhadas():
                 "mensagem": (
                     f"O grupo {group_name} está abaixo do esperado. "
                     f"Atendimento atual: {attendance_rate:.2f}%. "
-                    f"Regra de 30 segundos confirmada."
+                    f"Regra de 2 minutos confirmada."
                 ),
                 "status": "abaixo_esperado",
                 "threshold": ATTENDANCE_ALERT_THRESHOLD,
