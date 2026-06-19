@@ -1,4 +1,5 @@
-const MAX_POINTS = 360;
+const MAX_WINDOW_MINUTES = 30;
+const MAX_WINDOW_MS = MAX_WINDOW_MINUTES * 60 * 1000;
 const POLL_MS = 5000;
 const ATTENDANCE_COLOR = "#4ade80";
 const STATUS_COLORS = [
@@ -32,6 +33,7 @@ let displayedTotal = 0;
 let displayedAttendanceRate = 0;
 let currentAttendanceRate = 0;
 let lunchBannerVisible = false;
+const chartPointTimes = [];
 
 const chartContext = document.getElementById("callsChart");
 const chart = new Chart(chartContext, {
@@ -158,13 +160,16 @@ function formatTime(date) {
   }).format(date);
 }
 
-function pushPoint(label, value) {
+function pushPoint(label, value, timestamp) {
   chart.data.labels.push(label);
   chart.data.datasets[0].data.push(value);
+  chartPointTimes.push(timestamp);
 
-  if (chart.data.labels.length > MAX_POINTS) {
+  const cutoff = timestamp - MAX_WINDOW_MS;
+  while (chartPointTimes.length > 0 && chartPointTimes[0] < cutoff) {
     chart.data.labels.shift();
     chart.data.datasets[0].data.shift();
+    chartPointTimes.shift();
   }
 
   chart.update("active");
@@ -450,7 +455,7 @@ async function loadMetrics() {
     const total = body.data.total;
     const nextAttendanceRate = getAttendanceRate(body.data.byStatus, total);
 
-    pushPoint(label, getAttendanceCount(body.data.byStatus));
+    pushPoint(label, getAttendanceCount(body.data.byStatus), now.getTime());
     animateTotal(total);
     currentAttendanceRate = nextAttendanceRate;
     animateAttendanceRate(nextAttendanceRate);
