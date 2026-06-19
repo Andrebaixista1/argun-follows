@@ -474,7 +474,7 @@ def fetch_ligacoes_detalhadas():
                     "Content-Type": "application/json",
                 },
                 json=webhook_payload,
-                timeout=15,
+                timeout=600,
             )
 
             if response.status_code >= 400:
