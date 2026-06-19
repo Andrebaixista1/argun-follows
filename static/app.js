@@ -101,6 +101,20 @@ const chart = new Chart(chartContext, {
         borderColor: "rgba(15, 23, 42, 0.12)",
         borderWidth: 1,
         displayColors: false,
+        callbacks: {
+          label(context) {
+            const count = context.parsed.y ?? 0;
+            const total = context.dataset.data.reduce((sum, value) => sum + Number(value || 0), 0);
+            const rate = total ? (count / total) * 100 : 0;
+            return [
+              `ATENDIMENTO: ${count}`,
+              `Percentual: ${rate.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}%`,
+            ];
+          },
+        },
       },
     },
     scales: {
